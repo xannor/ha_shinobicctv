@@ -7,5 +7,39 @@
 			"path": "../pyshinobicctvapi"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"*.yaml": "home-assistant"
+		}
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Launch Chrome",
+				"request": "launch",
+				"type": "pwa-chrome",
+				"url": "http://localhost:8123",
+				"webRoot": "${workspaceFolder}"
+			}
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "Preview",
+				"type": "shell",
+				"command": "container start",
+				"group": {
+					"kind": "test",
+					"isDefault": true
+				},
+				"presentation": {
+					"reveal": "always",
+					"panel": "new"
+				}
+			}
+		]
+	}
 }

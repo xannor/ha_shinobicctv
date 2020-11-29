@@ -26,6 +26,8 @@ from .const import (
     DEFAULT_BRAND,
 )
 
+ATTRIBUTION = f"Data provided by {DEFAULT_BRAND}."
+
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL = timedelta(seconds=10)
@@ -50,19 +52,20 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
             },
         )
 
-    session = async_get_clientsession(hass)
     client = ShinobiClient(
-        ShinobiConnection(entry.data[CONF_HOST], entry.data[CONF_PORT], session),
-        entry.data[CONF_TOKEN],
-        entry.data[CONF_GROUP],
+        ShinobiConnection(
+            entry.data[CONF_HOST],
+            entry.data[CONF_PORT],
+            entry.data[CONF_TOKEN],
+            entry.data[CONF_GROUP],
+            async_get_clientsession(hass),
+        ),
     )
     _LOGGER.debug("Connected to Shinobi CCTV Platform")
 
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {"client": client}
-
-    await _async_get_or_create_shinobi_device_in_registry(
-        hass, entry, client.connection
-    )
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
+        "client": client,
+    }
 
     for platform in SHINOBI_PLATFORMS:
         hass.async_create_task(
@@ -72,22 +75,18 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     if not entry.update_listeners:
         entry.add_update_listener(async_update_options)
 
+    if hass.services.has_service(DOMAIN, "update"):
+        return True
+
+    async def async_refresh_all(_):
+        """Refresh all client data."""
+        for info in hass.data[DOMAIN].values():
+            """ TODO """
+
+    # register service
+    hass.services.async_register(DOMAIN, "update", async_refresh_all)
+
     return True
-
-
-async def _async_get_or_create_shinobi_device_in_registry(
-    hass: HomeAssistantType, entry: ConfigEntry, connection: ShinobiConnection
-) -> None:
-    device_registry = await dr.async_get_registry(hass)
-    device_registry.async_get_or_create(
-        config_entry_id=entry.entry_id,
-        connections={(dr.CONNECTION_NETWORK_MAC, connection.host)},
-        identifiers={(DOMAIN, connection.host)},
-        manufacturer=DEFAULT_BRAND,
-        name=entry.data[CONF_HOST],
-        # model=svr["platform_hw"],
-        # sw_version=svr["swversion"],
-    )
 
 
 async def async_update_options(hass: HomeAssistantType, entry: ConfigEntry):
@@ -106,8 +105,16 @@ async def async_unload_entry(hass: HomeAssistantType, entry: ConfigEntry) -> boo
         )
     )
 
-    if unload_ok:
-        hass.data[DOMAIN][entry.entry_id].client.close()
-        hass.data[DOMAIN].pop(entry.entry_id)
+    if not unload_ok:
+        return False
 
-    return unload_ok
+    hass.data[DOMAIN][entry.entry_id].client.close()
+    hass.data[DOMAIN].pop(entry.entry_id)
+
+    if len(hass.data[DOMAIN]) != 0:
+        return True
+
+    # Last entry unloaded, clean up service
+    hass.services.async_remove(DOMAIN, "update")
+
+    return True

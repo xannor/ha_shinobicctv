@@ -1,0 +1,44 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Shinobi CCTV",
+                "description": "Setup access to list Shinobi CCTV Monitors (cameras).",
+                "data": {
+                    "host": "[%key:common::config_flow::data::host%]",
+                    "port": "[%key:common::config_flow::data::port%]",
+                    "api_key": "API Key",
+                    "group": "Group Key",
+                    "scan_interval": "[%key:common::config_flow::data::scan_interval%]"
+                }
+            },
+            "login": {
+                "title": "Login needed",
+                "description": "A email/password login is needed.",
+                "data": {
+                    "username": "Email",
+                    "password": "[%key:common::config_flow::data::password%]"
+                }
+            },
+            "auth": {
+                "title": "2nd Factor Authentication required",
+                "data": {
+                    "auth": "Authentication Key"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "username": "Email",
+                    "password": "[%key:common::config_flow::data::password%]",
+                    "api_key": "API Key",
+                    "group": "Group Key",
+                    "scan_interval": "[%key:common::config_flow::data::scan_interval%]"
+                }
+            }
+        }
+    }
+}

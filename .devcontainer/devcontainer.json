@@ -25,10 +25,13 @@
 		"editor.formatOnPaste": false,
 		"editor.formatOnSave": true,
 		"editor.formatOnType": true,
-		"files.trimTrailingWhitespace": true
+		"files.trimTrailingWhitespace": true,
+		"yaml.customTags": [
+			"!secret scalar"
+		]
 	},
-	"workspaceMount": "source=workspace,target=/workspace,type=volume",
-	"workspaceFolder": "/workspace",
+	"workspaceFolder": "/workspaces",
+	"workspaceMount": "source=workspaces,target=${containerWorkspaceFolder},type=volume",
 	"mounts": [
 		"source=${localWorkspaceFolder},target=${containerWorkspaceFolder}/${localWorkspaceFolderBasename},type=bind,consistency=cached",
 		"source=${localWorkspaceFolder}/../pyshinobicctvapi,target=${containerWorkspaceFolder}/pyshinobicctvapi,type=bind,consistency=cached"
