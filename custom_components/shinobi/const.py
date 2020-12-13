@@ -14,4 +14,6 @@ DEFAULT_BRAND = "Shinobi Systems"
 DEFAULT_USERNAME = "admin@shinobi.video"
 DEFAULT_SCAN_INTERVAL = 10
 
+CAMERA_WEB_SESSION_TIMEOUT = 10
+
 LOGGER = logging.getLogger(__package__)
