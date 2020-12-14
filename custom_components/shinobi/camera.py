@@ -88,7 +88,7 @@ class ShinobiCamera(ShinobiEntityMixin[Monitor], Camera):
 
     async def async_create_still_from_stream(self):
         """ Generate a still image from camera stream using FFMPEG """
-        ffmpeg = ImageFrame(self._ffmpeg.binary, self.hass.loop)
+        ffmpeg = ImageFrame(self._ffmpeg.binary)
 
         if self._stream_source is None:
             return
@@ -152,7 +152,7 @@ class ShinobiCamera(ShinobiEntityMixin[Monitor], Camera):
 
         _LOGGER.debug("converting source stream to mjpeg for replay")
         streaming_url = self._stream_source.url
-        stream = CameraMjpeg(self._ffmpeg.binary, loop=self.hass.loop)
+        stream = CameraMjpeg(self._ffmpeg.binary)
         await stream.open_camera(streaming_url)  # , extra_cmd=self._ffmpeg_arguments)
 
         try:
