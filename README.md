@@ -2,6 +2,12 @@
 
 Shinobi CCTV Home Assistant Integration
 
+## Closed ##
+
+I am no longer maintaining this project, instead I reccomend using this project, which already is available from within HACS.
+
+[Shinobi Video NVR](https://github.com/elad-bar/ha-shinobi)
+
 ## How it works
 
 This custom component adds a support for Shinobi CCTV monitors to show up as camera entities in home assistant.
